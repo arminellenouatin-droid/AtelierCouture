@@ -1,45 +1,105 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useAuth } from "@/_core/hooks/useAuth";
 import NotFound from "@/pages/NotFound";
 import Operations from "@/pages/Operations";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
+import { useEffect } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import Admin from "./pages/Admin";
+import Caisse from "./pages/Caisse";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Production from "./pages/Production";
+import Purchases from "./pages/Purchases";
+import Settings from "./pages/Settings";
+import Assistant from "./pages/Assistant";
+import Accounting from "./pages/Accounting";
+import Onboarding from "./pages/Onboarding";
+import Staff from "./pages/Staff";
+import Support from "./pages/Support";
+import Billing from "./pages/Billing";
+import Treasury from "./pages/Treasury";
+import Shop from "./pages/Shop";
+import ShopProduct from "./pages/ShopProduct";
+import ShopCheckout from "./pages/ShopCheckout";
+import ShopPayment from "./pages/ShopPayment";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
+  // L'administration ENVOL n'appartient à aucune marque : son tableau de
+  // bord est l'espace d'administration, pas celui d'une marque.
+  const { user } = useAuth();
+  const [location, navigate] = useLocation();
+  useEffect(() => {
+    if (user?.role === "admin" && location === "/") navigate("/admin", { replace: true });
+  }, [user, location, navigate]);
+
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/operations/:section"}>{(params) => <Operations section={params.section} />}</Route>
-      <Route path={"/operations"}>{() => <Operations />}</Route>
-      <Route path={"/404"} component={NotFound} />
+      <Route path="/" component={Home} />
+      <Route path="/login" component={Login} />
+      <Route path="/onboarding" component={Onboarding} />
+      <Route path="/caisse" component={Caisse} />
+      <Route path="/operations/:section">{(params) => <Operations section={params.section} />}</Route>
+      <Route path="/operations">{() => <Operations />}</Route>
+      <Route path="/production" component={Production} />
+      <Route path="/approvisionnement" component={Purchases} />
+      <Route path="/tresorerie" component={Treasury} />
+      <Route path="/comptabilite" component={Accounting} />
+      <Route path="/personnel" component={Staff} />
+      <Route path="/facturation" component={Billing} />
+      <Route path="/reglages" component={Settings} />
+      <Route path="/assistant" component={Assistant} />
+      <Route path="/assistance" component={Support} />
+      <Route path="/admin" component={Admin} />
+      <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
+/** Vitrine publique : visible par tout le monde, sans connexion (5.1). */
+function ShopRouter() {
+  return (
+    <Switch>
+      <Route path="/boutique/:slug" component={Shop} />
+      <Route path="/boutique/:slug/produit/:id" component={ShopProduct} />
+      <Route path="/boutique/:slug/panier" component={ShopCheckout} />
+      <Route path="/boutique/:slug/paiement/:paymentId" component={ShopPayment} />
+      <Route component={NotFound} />
+    </Switch>
+  );
+}
 
-function App() {
+export default function App() {
+  const { loading, isAuthenticated } = useAuth();
+  const [location] = useLocation();
+  const isLoginPage = location === "/login";
+  const isPublicShop = location.startsWith("/boutique");
+
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
-          <Router />
+          {isPublicShop ? (
+            <ShopRouter />
+          ) : loading && !isLoginPage ? (
+            <div className="flex min-h-screen items-center justify-center bg-[#f7f7f5]">
+              <div className="text-center">
+                <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[#20231f] border-t-transparent" />
+                <p className="text-sm text-[#858880]">Chargement d’AtelierManager…</p>
+              </div>
+            </div>
+          ) : !isAuthenticated && !isLoginPage ? (
+            <Login />
+          ) : (
+            <Router />
+          )}
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );
 }
-
-export default App;

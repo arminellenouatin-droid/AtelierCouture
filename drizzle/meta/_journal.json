@@ -1,12 +1,54 @@
 {
   "version": "7",
-  "dialect": "mysql",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1788386487139,
-      "tag": "0000_secret_weapon_omega",
+      "version": "7",
+      "when": 1788896658852,
+      "tag": "0000_oval_fat_cobra",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788897852483,
+      "tag": "0001_dashing_random",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788899228728,
+      "tag": "0002_rare_firelord",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788899930607,
+      "tag": "0003_curious_human_fly",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788900525014,
+      "tag": "0004_numerous_next_avengers",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788901167775,
+      "tag": "0005_many_dracula",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788901700762,
+      "tag": "0006_melted_havok",
       "breakpoints": true
     }
   ]
