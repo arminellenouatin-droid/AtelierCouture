@@ -37,6 +37,9 @@ function resolvePglitePath(): string {
 
 async function createDatabase(): Promise<AppDatabase> {
   const url = process.env.DATABASE_URL ?? "";
+  if (process.env.NODE_ENV === "production" && (!url || url.startsWith("pglite://"))) {
+    throw new Error("DATABASE_URL doit pointer vers une base PostgreSQL distante en production");
+  }
   if (url && !url.startsWith("pglite://")) {
     const { Pool } = await import("pg");
     const pool = new Pool({ connectionString: url, max: 5, ssl: url.includes("sslmode=require") ? { rejectUnauthorized: false } : undefined });

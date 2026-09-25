@@ -1,16 +1,28 @@
 [build]
   command = "pnpm build"
   publish = "dist/public"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "22"
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["@electric-sql/pglite"]
+  included_files = ["drizzle/*.sql", "drizzle/meta/*"]
 
 [dev]
   command = "pnpm dev"
   port = 3000
 
 # Les variables sensibles doivent être configurées dans Netlify, jamais dans ce dépôt.
-# DATABASE_URL doit être fournie par l’environnement de déploiement.
+# DATABASE_URL et JWT_SECRET sont requis pour la production.
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
 
 [[redirects]]
   from = "/*"

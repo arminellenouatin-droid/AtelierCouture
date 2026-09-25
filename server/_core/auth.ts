@@ -16,6 +16,9 @@ export const SESSION_COOKIE = "app_session_id";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 jours
 
 function secretKey(): Uint8Array {
+  if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET doit être défini en production");
+  }
   const secret = process.env.JWT_SECRET || "atelier-manager-dev-secret-change-me";
   return new TextEncoder().encode(secret);
 }
