@@ -38,42 +38,47 @@ export function verifyPassword(password: string, stored: string | null): boolean
   return candidate.length === expected.length && timingSafeEqual(candidate, expected);
 }
 
-export async function createSessionToken(userId: number): Promise<string> {
-  return new SignJWT({ sub: String(userId) })
+export async function createSessionToken(userId: number, sessionVersion = 0): Promise<string> {
+  return new SignJWT({ sub: String(userId), sv: sessionVersion })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(`${SESSION_TTL_SECONDS}s`)
     .sign(secretKey());
 }
 
-export async function readSessionUserId(req: Request): Promise<number | null> {
-  // 1) Cookie de session (accès direct, cookies acceptés).
-  const header = req.headers.cookie ?? "";
-  const token = parseCookieHeader(header)[SESSION_COOKIE];
-  if (token) return readTokenUserId(token);
-  // 2) En-tête Authorization: Bearer (aperçu en iframe avec cookies tiers bloqués).
-  const auth = req.headers.authorization;
-  if (auth?.startsWith("Bearer ")) return readTokenUserId(auth.slice(7));
-  return null;
-}
+type SessionClaims = { userId: number; sessionVersion: number };
 
-export async function readTokenUserId(token: string): Promise<number | null> {
+export async function readSessionClaims(token: string): Promise<SessionClaims | null> {
   try {
     const { payload } = await jwtVerify(token, secretKey());
-    const id = Number(payload.sub);
-    return Number.isInteger(id) && id > 0 ? id : null;
+    const userId = Number(payload.sub);
+    const sessionVersion = payload.sv === undefined ? 0 : Number(payload.sv);
+    if (!Number.isInteger(userId) || userId <= 0 || !Number.isInteger(sessionVersion) || sessionVersion < 0) return null;
+    return { userId, sessionVersion };
   } catch {
     return null;
   }
 }
 
+export async function readSessionClaimsFromRequest(req: Request): Promise<SessionClaims | null> {
+  // 1) Cookie de session (accès direct, cookies acceptés).
+  const header = req.headers.cookie ?? "";
+  const token = parseCookieHeader(header)[SESSION_COOKIE];
+  if (token) return readSessionClaims(token);
+  // 2) En-tête Authorization: Bearer (aperçu en iframe avec cookies tiers bloqués).
+  const auth = req.headers.authorization;
+  if (auth?.startsWith("Bearer ")) return readSessionClaims(auth.slice(7));
+  return null;
+}
+
 export async function getSessionUser(req: Request): Promise<User | null> {
-  const userId = await readSessionUserId(req);
-  if (!userId) return null;
+  const claims = await readSessionClaimsFromRequest(req);
+  if (!claims) return null;
   const db = await getDb();
   if (!db) return null;
-  const result = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-  return result[0] ?? null;
+  const result = await db.select().from(users).where(eq(users.id, claims.userId)).limit(1);
+  const user = result[0];
+  return user && user.sessionVersion === claims.sessionVersion ? user : null;
 }
 
 export function sessionCookieOptions(req: Request) {

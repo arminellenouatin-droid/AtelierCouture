@@ -3,12 +3,8 @@
  * présentation) + le compte d'administration ENVOL. Exécuté automatiquement
  * au premier démarrage si la base est vide, ou manuellement via `pnpm db:seed`.
  *
- * Comptes de démonstration (mot de passe indiqué après le /) :
- *  - admin@envol.africa / envol2026        → administration ENVOL
- *  - proprietaire@distinction.tg / demo2026 → propriétaire DISTINCTION
- *  - comptable@distinction.tg / demo2026
- *  - chef.atelier@distinction.tg / demo2026
- *  - vendeuse@distinction.tg / demo2026
+ * Aucun secret n'est codé en dur. En développement uniquement, les mots de
+ * passe peuvent être définis via DEMO_PASSWORD et DEMO_ADMIN_PASSWORD.
  */
 import { sql } from "drizzle-orm";
 import { hashPassword } from "./_core/auth";
@@ -41,8 +37,6 @@ import {
 } from "../drizzle/schema";
 import { DEFAULT_RATES } from "./domain/money";
 import { trialEndsFrom } from "./domain/subscription";
-
-const DEMO_PASSWORD = "demo2026";
 
 const GAMMES = [
   { key: "leader", label: "Leader" },
@@ -80,10 +74,12 @@ export async function seed(): Promise<void> {
   if (!db) throw new Error("Base indisponible pour la seed");
 
   // Comptes de base
-  const passwordHash = hashPassword(DEMO_PASSWORD);
+  const isProduction = process.env.NODE_ENV === "production";
+  const passwordHash = !isProduction && process.env.DEMO_PASSWORD ? hashPassword(process.env.DEMO_PASSWORD) : null;
+  const adminPasswordHash = !isProduction && process.env.DEMO_ADMIN_PASSWORD ? hashPassword(process.env.DEMO_ADMIN_PASSWORD) : null;
   const [envolAdmin] = await db
     .insert(users)
-    .values({ openId: "local:admin@envol.africa", email: "admin@envol.africa", name: "Équipe ENVOL", passwordHash: hashPassword("envol2026"), role: "admin" })
+    .values({ openId: "local:admin@envol.africa", email: "admin@envol.africa", name: "Équipe ENVOL", passwordHash: adminPasswordHash, role: "admin" })
     .returning({ id: users.id });
 
   const userSeeds = [

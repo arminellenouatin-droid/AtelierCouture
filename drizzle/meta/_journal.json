@@ -50,6 +50,13 @@
       "when": 1788901700762,
       "tag": "0006_melted_havok",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790422234681,
+      "tag": "0007_curvy_toad",
+      "breakpoints": true
     }
   ]
 }

@@ -6,14 +6,6 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 
-const demoAccounts = [
-  { label: "Propriétaire DISTINCTION", email: "proprietaire@distinction.tg" },
-  { label: "Chef d’atelier", email: "chef.atelier@distinction.tg" },
-  { label: "Comptable", email: "comptable@distinction.tg" },
-  { label: "Vendeuse", email: "vendeuse@distinction.tg" },
-  { label: "Administration ENVOL", email: "admin@envol.africa" },
-];
-
 export default function Login() {
   const utils = trpc.useUtils();
   const [, navigate] = useLocation();
@@ -60,11 +52,6 @@ export default function Login() {
     } else {
       register.mutate({ name: values.name, email: values.email, password: values.password }, { onSettled: () => setPending(false) });
     }
-  };
-
-  const fillDemo = (email: string) => {
-    setMode("login");
-    setValues({ name: "", email, password: email === "admin@envol.africa" ? "envol2026" : "demo2026" });
   };
 
   return (
@@ -148,18 +135,7 @@ export default function Login() {
             </Button>
           </form>
 
-          <div className="mt-6 rounded-3xl border border-dashed border-[#d9d7d0] bg-white/60 p-5">
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#a1a39d]">Comptes de démonstration</p>
-            <p className="mt-1 text-[11px] text-[#858880]">Cliquez pour remplir le formulaire (mot de passe inclus).</p>
-            <div className="mt-3 space-y-1.5">
-              {demoAccounts.map((account) => (
-                <button key={account.email} onClick={() => fillDemo(account.email)} className="flex w-full items-center justify-between rounded-xl border border-[#ececea] bg-white px-3 py-2 text-left text-[11px] font-semibold text-[#40433d] transition hover:border-[#20231f]">
-                  <span>{account.label}</span>
-                  <span className="font-mono text-[10px] font-normal text-[#969991]">{account.email}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+          <p className="mt-5 text-center text-xs text-[#858880]">Besoin d’un accès à une marque existante ? Contactez son administrateur.</p>
           <p className="mt-4 text-center font-mono text-[10px] text-[#b0b3aa]">AtelierManager · v2.1 · session sécurisée</p>
         </div>
       </div>

@@ -66,7 +66,7 @@ export default function Admin() {
           <CardContent className="px-5 py-14 text-center">
             <ShieldCheck size={22} className="mx-auto mb-3 text-[#b4604e]" />
             <p className="text-sm font-semibold">Accès réservé à l’équipe ENVOL AFRICA GROUPE</p>
-            <p className="mt-1 text-xs text-[#92958d]">Connectez-vous avec le compte administration (admin@envol.africa).</p>
+            <p className="mt-1 text-xs text-[#92958d]">Connectez-vous avec un compte d’administration ENVOL autorisé.</p>
           </CardContent>
         </Card>
       </AppShell>

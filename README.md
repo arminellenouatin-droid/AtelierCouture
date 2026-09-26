@@ -42,15 +42,9 @@ pnpm dev          # http://localhost:3000
 
 Au premier démarrage, l'application crée automatiquement une base **PostgreSQL embarquée (PGlite)** dans `.data/`, applique les migrations puis installe les données de démonstration de la marque test **DISTINCTION** (section 16 de la présentation).
 
-### Comptes de démonstration
+### Comptes de démonstration et accès
 
-| Compte | Mot de passe | Rôle |
-|---|---|---|
-| `proprietaire@distinction.tg` | `demo2026` | Propriétaire DISTINCTION (formule complète) |
-| `chef.atelier@distinction.tg` | `demo2026` | Chef d'atelier |
-| `comptable@distinction.tg` | `demo2026` | Comptable (validations d'achats) |
-| `vendeuse@distinction.tg` | `demo2026` | Vendeuse (caisse) |
-| `admin@envol.africa` | `envol2026` | Administration plateforme ENVOL |
+La seed ne définit aucun mot de passe par défaut. En développement uniquement, un mot de passe de démonstration peut être fourni via `DEMO_PASSWORD` et `DEMO_ADMIN_PASSWORD` dans un fichier `.env` local ignoré par Git. La seed ignore ces variables en production. Aucun compte démo ni secret ne doit être publié dans une interface ou une documentation accessible publiquement.
 
 ### Scripts
 

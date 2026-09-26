@@ -105,6 +105,7 @@ export const users = pgTable("users", {
   openId: varchar("openId", { length: 160 }).notNull().unique(),
   email: varchar("email", { length: 320 }).notNull().unique(),
   passwordHash: text("passwordHash"),
+  sessionVersion: integer("sessionVersion").default(0).notNull(),
   name: text("name"),
   loginMethod: varchar("loginMethod", { length: 64 }).default("local").notNull(),
   role: userRoleEnum("role").default("user").notNull(),
