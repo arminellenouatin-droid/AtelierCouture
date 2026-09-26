@@ -24,12 +24,12 @@
 ## Paiement
 - Prestataire visé : Moneroo.
 - État de départ : README du projet indique une simulation lorsque les clés Moneroo manquent; les clés de production ne sont pas demandées ni modifiées dans cette mission.
-- Ne pas déployer en production tant qu’un paiement réel n’a pas été configuré et validé en environnement sandbox.
+- Ne pas activer l’encaissement réel ni déclarer les paiements conformes sans validation Moneroo en environnement sandbox; le déploiement sécurité ne vaut pas validation du paiement.
 
 ## Plan d’exécution
 - [x] Lire les 17 sections du cahier des charges.
 - [x] Examiner le code et les tests existants.
 - [x] Verrouiller les cinq comptes en production après l’accord explicite de l’utilisateur.
 - [x] Supprimer les credentials visibles du login et du README; enlever tout mot de passe par défaut du seed.
-- [ ] Valider typecheck, tests et build, puis pousser/déployer uniquement le correctif de sécurité.
-- [ ] Rédiger le rapport final, distinguer les questions métier et les limites de test.
+- [x] Valider typecheck, 85 tests (1 ignoré) et build; pousser `3b39e3c` sur `main` et déployer sur Netlify production (deployment `6ab7b4172cf8dc95b2ae9b5e`, état ready).
+- [x] Rédiger le rapport de conformité, distinguer les écarts certains, les limites de test et les décisions métier ouvertes.
